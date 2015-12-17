@@ -9,29 +9,26 @@ using Newtonsoft.Json;
 namespace BlogEngine2GhostConverter
 {
     class Program
-    {
-        private static readonly DateTime Epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-
+    {       
         static void Main(string[] args)
         {            
             if (args.Length != 2)
             {
                 Console.WriteLine("Invalid arguments!");
-                Console.WriteLine("Sample command:BlogEngine2GhostConverter data.xml data.json");
                 return;
             }
 
             string inputFileName = args[0];
             string outputFileName = args[1];
 
-            var convertedData = ConvertInputFile(inputFileName);
-
+            const string Version = "004";
             var metaData = new
             {
                 exported_on = GetEpochTime(DateTime.UtcNow),
-                version = "004"
+                version = Version
             };
 
+            var convertedData = ConvertInputFile(inputFileName);
             var rootData = new
             {
                 meta = metaData,
@@ -119,7 +116,8 @@ namespace BlogEngine2GhostConverter
 
         private static long GetEpochTime(DateTime dateTime)
         {
-            return (long)(dateTime - Epoch).TotalMilliseconds;
+            var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            return (long)(dateTime - epoch).TotalMilliseconds;
         }
 
         private static string GetSlugFromTitle(string url)
