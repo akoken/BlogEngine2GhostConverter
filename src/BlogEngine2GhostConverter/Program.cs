@@ -21,11 +21,11 @@ namespace BlogEngine2GhostConverter
             string inputFileName = args[0];
             string outputFileName = args[1];
 
-            const string Version = "004";
+            const string DataVersion = "004";
             var metaData = new
             {
                 exported_on = GetEpochTime(DateTime.UtcNow),
-                version = Version
+                version = DataVersion
             };
 
             var convertedData = ConvertInputFile(inputFileName);
