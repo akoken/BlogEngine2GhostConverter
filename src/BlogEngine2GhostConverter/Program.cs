@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using Newtonsoft.Json;
@@ -122,7 +124,28 @@ namespace BlogEngine2GhostConverter
 
         private static string GetSlugFromTitle(string url)
         {
-            return Regex.Replace(Regex.Replace(url, "[^A-Za-z0-9-]+", "-"), "-{2,}", "-");
-        }     
+            return Regex.Replace(Regex.Replace(RemoveDiacritics(url), "[^A-Za-z0-9-]+", "-"), "-{2,}", "-");
+        }
+
+        public static string RemoveDiacritics(string text)
+        {
+            Encoding srcEncoding = Encoding.UTF8;
+            Encoding destEncoding = Encoding.GetEncoding(1252); // Latin alphabet
+
+            text = destEncoding.GetString(Encoding.Convert(srcEncoding, destEncoding, srcEncoding.GetBytes(text)));
+
+            string normalizedString = text.Normalize(NormalizationForm.FormD);
+            var builder = new StringBuilder();
+
+            for (int i = 0; i < normalizedString.Length; i++)
+            {
+                if (!CharUnicodeInfo.GetUnicodeCategory(normalizedString[i]).Equals(UnicodeCategory.NonSpacingMark))
+                {
+                    builder.Append(normalizedString[i]);
+                }
+            }
+
+            return builder.ToString();
+        }
     }
 }
